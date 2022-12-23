@@ -1,4 +1,4 @@
-import {  useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { letters } from '../assets/data/data'
 
 const wordsAvalible = ['paco', 'mango', 'perro', 'mojar']
@@ -16,7 +16,6 @@ const initialMatrix = Array.from({ length: MAXIME_ATTEMPTS }, () =>
 export const useWordleGame = () => {
   const [matrix, setMatrix] = useState<string[][]>(initialMatrix)
   const [boxActive, setBoxActive] = useState([0, 0])
-
 
   const verifyWordAndFeedback = (attempt: number) => {
     // Se obtiene la palabra formada en el intento actual
@@ -108,7 +107,7 @@ export const useWordleGame = () => {
     const background = {
       background: 'bg-[#3b4150]'
     }
-    
+
     // Si la letra se encuentra en el mismo lugar de la palabra a adivinar
     if (matrix[i][j] === wordToPlay[j]) {
       background.background = 'bg-green'

@@ -38,8 +38,10 @@ module.exports = {
         'modal-dark-opacity': 'rgba(38, 43, 60, 0.89)',
         'header-dark': 'rgba(218, 220, 224, 0.03)',
         darKBlue:"#202537",
-        lightWhite:"#DADCE0"
+        lightWhite:"#DADCE0",
         
+        keyBoardDark:" rgba(218, 220, 224, 0.03)",
+        keyBoardLight:" rgba(218, 220, 224, 0.3)",
       }
     }
   },

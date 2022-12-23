@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import { Letter } from '../../atoms/Letter'
 import { letters } from '../../../assets/data/data'
 import { removeSpecialCharacter } from '../../../utils/RemoveSpecialLetters'
+import { BoardProps } from './Board.type'
 // import { useWordleGame } from '../../../hooks/useWordleGame'
 
 const wordsAvalible = ['pácó', 'mángo', 'perro', 'mojar']
@@ -30,7 +31,7 @@ interface BoxLetter {
     | 'bg-[#3b4150]'
 }
 
-export const Game = () => {
+export const Game = ({onPressed}:BoardProps) => {
   // const { matrix, boxActive, drawColorByEvaluation } = useWordleGame()
   const [matrix, setMatrix] = useState<Array<Array<BoxLetter>>>(initialMatrix)
   const [boxActive, setBoxActive] = useState([0, 0])

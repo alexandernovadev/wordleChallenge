@@ -5,11 +5,11 @@ import chart_lightLight from '../../../assets/svgs/chart_light.svg'
 import chart_lightDark from '../../../assets/svgs/chart_dark.svg'
 
 export const icons: Icons = {
-  dark: {
+  light: {
     bi_question: bi_questionLight,
     chart: chart_lightLight
   },
-  light: {
+  dark : {
     bi_question: bi_questionDark,
     chart: chart_lightDark
   }

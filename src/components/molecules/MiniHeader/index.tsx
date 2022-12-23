@@ -29,7 +29,7 @@ export const MiniHeader = ({
           onClick={openInstructions}
           src={bi_question}
           className='w-[27px] h-[27px] object-cover cursor-pointer mr-[13px]'
-          alt=''
+          alt='Instrucciones'
         />
       </div>
       <div>
@@ -45,7 +45,7 @@ export const MiniHeader = ({
           onClick={openStatistics}
           src={chart}
           className='w-[27px] h-[27px] object-cover cursor-pointer mr-[13px]'
-          alt=''
+          alt='Estadisticas'
         />
         <Switch
           onChange={handleChangeTheme}
