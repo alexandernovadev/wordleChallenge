@@ -1,11 +1,11 @@
-import React, { useContext, useState } from 'react'
+import { useContext, useState } from 'react'
 import { GameContext } from '../../../context/Game/GameContext'
 import { Key } from '../../atoms/Key'
 import { Board } from '../../molecules/Board'
+import { Instructions } from '../../molecules/Instructions'
 import { KeyBoard } from '../../molecules/KeyBoard'
 import { MiniHeader } from '../../molecules/MiniHeader'
-import { Instructions } from '../Instructions'
-import { Statistics } from '../Statistics'
+import { Statistics } from '../../molecules/Statistics'
 
 export const Game = () => {
   const { dispatch } = useContext(GameContext)
@@ -25,7 +25,7 @@ export const Game = () => {
           openInstructions={() => setIsModalInstructionOpen(true)}
           openStatistics={() => setIsModalStatisticsOpen(true)}
         />
-        <Board isPresseKey={isPresseKey} />
+        <Board isPresseKey={isPresseKey} showStatitics={()=>setIsModalStatisticsOpen(true)}/>
         <KeyBoard>
           <div className='flex gap-[9.57px] '>
             <Key value='Q' onClick={onKeyPressed} />

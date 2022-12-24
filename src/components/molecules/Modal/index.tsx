@@ -15,7 +15,7 @@ export const Modal = ({ children, isOpen, classNames = '' }: ModalProps) => {
     <>
       {isOpen && (
         <section className={`${overlayModal} `}>
-          <div className={`${contentModal} ${classNames}`}>{children}</div>
+          <div className={`${contentModal} ${classNames} animate__animated animate__zoomIn animate__faster `}>{children}</div>
         </section>
       )}
     </>

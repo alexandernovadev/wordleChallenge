@@ -10,7 +10,7 @@ const wordsAvalible = ['pácó', 'mángo', 'perro', 'mojar']
 
 const randomIndex = Math.floor(Math.random() * wordsAvalible.length)
 const wordToPlay = wordsAvalible[randomIndex]
-console.log("La palabra es ", wordToPlay);
+console.log('La palabra es ', wordToPlay)
 
 const MAXIME_ROWS = wordToPlay.length
 const MAXIME_ATTEMPTS = 5
@@ -23,6 +23,7 @@ const initialMatrix: Array<Array<BoxLetter>> = Array.from(
       bgColor: 'bg-[#dbdddd] dark:bg-[#3b4150]'
     })
 )
+const valueInitals = JSON.parse(JSON.stringify(initialMatrix))
 
 interface BoxLetter {
   letter: string
@@ -33,18 +34,24 @@ interface BoxLetter {
     | 'bg-[#3b4150]'
 }
 
-export const Board = ({isPresseKey}:BoardProps) => {
+export const Board = ({ isPresseKey, showStatitics }: BoardProps) => {
   // const { matrix, boxActive, drawColorByEvaluation } = useWordleGame()
 
-  const {letter} = useContext(GameContext)
+  const { letter, dispatch, games, wins } = useContext(GameContext)
 
-  const [matrix, setMatrix] = useState<Array<Array<BoxLetter>>>(initialMatrix)
+  const [matrix, setMatrix] = useState<Array<Array<BoxLetter>>>(valueInitals)
   const [boxActive, setBoxActive] = useState([0, 0])
 
   useEffect(() => {
-   handleGameKeys(letter)
+    handleGameKeys(letter)
   }, [isPresseKey])
-  
+
+  const resetGame = () => {
+    const newGame = JSON.parse(JSON.stringify(initialMatrix))
+    setMatrix(newGame)
+    setBoxActive([0, 0])
+  }
+
   const setLetterInBox = (letter: string) => {
     const [rowIndex, colIndex] = boxActive
 
@@ -92,19 +99,20 @@ export const Board = ({isPresseKey}:BoardProps) => {
   }
 
   const getWordAndCorrectDraw = () => {
-    
     let currentWord = ''
     const newMatrix = [...matrix]
     // Get Word and pintar las correcciones
     for (let i = 0; i < matrix[boxActive[0]].length; i++) {
       const currentLetter = matrix[boxActive[0]][i].letter.toLocaleLowerCase()
       const lowerWordToPlay = wordToPlay.toLocaleLowerCase()
-      currentWord += currentLetter      
+      currentWord += currentLetter
 
       let bgColor: BoxLetter['bgColor'] = 'bg-[#dbdddd] dark:bg-[#3b4150]'
       if (removeSpecialCharacter(lowerWordToPlay[i]) === currentLetter) {
         bgColor = 'bg-green'
-      } else if (removeSpecialCharacter(lowerWordToPlay).includes(currentLetter)) {
+      } else if (
+        removeSpecialCharacter(lowerWordToPlay).includes(currentLetter)
+      ) {
         bgColor = 'bg-yellow'
       }
 
@@ -123,26 +131,24 @@ export const Board = ({isPresseKey}:BoardProps) => {
 
     const [rowIndex] = boxActive
 
-    // Puede seguir jugando? o perdio? o ya gano ?
+    // Puede seguir jugando? perdio? o ya gano ?
     if (removeSpecialCharacter(wordToPlay) === currentWord) {
-      //win ++
-      //games++
-      console.log('WINNNER !!!! ')
-      //showmodal statics
+      dispatch({ type: 'SET_GAMES', payload: games + 1 })
+      dispatch({ type: 'SET_WINS', payload: wins + 1 })
+      resetGame()
+      showStatitics()
     } else if (boxActive[0] < MAXIME_ATTEMPTS - 1) {
       //sumele un nueva attemps y poscisionelo
-      console.log('Siga aqui')
       setBoxActive([rowIndex + 1, 0])
     } else {
       console.log('Ya perdio')
-      //game over
-      //games++
-      //showmodal statics
+      dispatch({ type: 'SET_GAMES', payload: games + 1 })
+      resetGame()
+      showStatitics()
     }
   }
 
   const handleGameKeys = (key: string) => {
-    
     const [rowIndex, colIndex] = boxActive
     if (key === 'Backspace') {
       deleteLetter()

@@ -1,4 +1,3 @@
-import React from 'react'
 import { Button } from '../../atoms/Button'
 import { Letter } from '../../atoms/Letter'
 import { Modal } from '../../molecules/Modal'
@@ -8,6 +7,7 @@ export const Instructions = ({
   isModalInstructionOpen,
   setIsModalInstructionOpen
 }: IntructionsProps) => {
+
   return (
     <Modal isOpen={isModalInstructionOpen}>
       <div className='flex justify-center items-center mb-8 text-slate-900 dark:text-white'>
