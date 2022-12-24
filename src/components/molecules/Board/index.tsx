@@ -1,14 +1,16 @@
-import { useEffect, useState } from 'react'
+import { useContext, useEffect, useState } from 'react'
 import { Letter } from '../../atoms/Letter'
 import { letters } from '../../../assets/data/data'
 import { removeSpecialCharacter } from '../../../utils/RemoveSpecialLetters'
 import { BoardProps } from './Board.type'
+import { GameContext } from '../../../context/Game/GameContext'
 // import { useWordleGame } from '../../../hooks/useWordleGame'
 
 const wordsAvalible = ['pácó', 'mángo', 'perro', 'mojar']
 
 const randomIndex = Math.floor(Math.random() * wordsAvalible.length)
 const wordToPlay = wordsAvalible[randomIndex]
+console.log("La palabra es ", wordToPlay);
 
 const MAXIME_ROWS = wordToPlay.length
 const MAXIME_ATTEMPTS = 5
@@ -31,11 +33,18 @@ interface BoxLetter {
     | 'bg-[#3b4150]'
 }
 
-export const Game = ({onPressed}:BoardProps) => {
+export const Board = ({isPresseKey}:any) => {
   // const { matrix, boxActive, drawColorByEvaluation } = useWordleGame()
+
+  const {letter} = useContext(GameContext)
+
   const [matrix, setMatrix] = useState<Array<Array<BoxLetter>>>(initialMatrix)
   const [boxActive, setBoxActive] = useState([0, 0])
 
+  useEffect(() => {
+   handleGameKeys(letter)
+  }, [isPresseKey])
+  
   const setLetterInBox = (letter: string) => {
     const [rowIndex, colIndex] = boxActive
 
@@ -83,6 +92,7 @@ export const Game = ({onPressed}:BoardProps) => {
   }
 
   const getWordAndCorrectDraw = () => {
+    
     let currentWord = ''
     const newMatrix = [...matrix]
     // Get Word and pintar las correcciones
@@ -93,6 +103,8 @@ export const Game = ({onPressed}:BoardProps) => {
       let bgColor: BoxLetter['bgColor'] = 'bg-[#dbdddd] dark:bg-[#3b4150]'
       if (removeSpecialCharacter(wordToPlay[i]) === currentLetter) {
         bgColor = 'bg-green'
+        console.log("es verde");
+        
       } else if (removeSpecialCharacter(wordToPlay).includes(currentLetter)) {
         bgColor = 'bg-yellow'
       }
@@ -131,6 +143,7 @@ export const Game = ({onPressed}:BoardProps) => {
   }
 
   const handleGameKeys = (key: string) => {
+    
     const [rowIndex, colIndex] = boxActive
     if (key === 'Backspace') {
       deleteLetter()
