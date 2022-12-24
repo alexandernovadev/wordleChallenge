@@ -3,12 +3,13 @@ import { Button } from '../../atoms/Button'
 import { Modal } from '../../molecules/Modal'
 import { StatisticsProps } from './Statistics.type'
 import { GameContext } from '../../../context/Game/GameContext'
+import { formatTime } from '../../../utils/MiliSecondToTime'
 
 export const Statistics = ({
   isModalStatiticsOpen,
   setIsModalStatisticsOpen
 }: StatisticsProps) => {
-  const { games, wins } = useContext(GameContext)
+  const { games, wins, time } = useContext(GameContext)
 
   return (
     <Modal isOpen={isModalStatiticsOpen} classNames='!px-[70px]'>
@@ -33,7 +34,7 @@ export const Statistics = ({
         </h3>
 
         <p className='mt-4'>SIGUIENTE PALABRA</p>
-        <h3 className='mt-2 mb-12'>04:10</h3>
+        <h3 className='mt-2 mb-12'>{formatTime(time)}</h3>
 
         <Button
           text={'Aceptar'}

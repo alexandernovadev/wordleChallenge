@@ -1,21 +1,20 @@
-import { useReducer } from 'react'
-import { contextGameProps } from './Game.type'
+import { useEffect, useReducer } from 'react'
+import { ActionType, contextGameProps, GamePropsOnlyData } from './Game.type'
 import { GameContext } from './GameContext'
 
 interface Props {
   children: JSX.Element | JSX.Element[]
 }
+const TIME = 300000
 
-const initialState = {
+const initialState:GamePropsOnlyData = {
   games: 0,
   wins: 0,
-  letter: ''
+  letter: '',
+  time: +getTime(),
+  isFirstGame: true
 }
 
-type ActionType =
-  | { type: 'SET_LETTER'; payload: string }
-  | { type: 'SET_GAMES'; payload: number }
-  | { type: 'SET_WINS'; payload: number }
 
 function reducer(state: typeof initialState, action: ActionType) {
   switch (action.type) {
@@ -25,14 +24,35 @@ function reducer(state: typeof initialState, action: ActionType) {
       return { ...state, games: action.payload }
     case 'SET_WINS':
       return { ...state, wins: action.payload }
+    case 'SET_TIME':
+      return { ...state, time: action.payload }
     default:
       throw new Error()
   }
 }
 
+function getTime() {
+  return localStorage.getItem('time') || TIME
+}
+
 export const GameProvider = ({ children }: Props) => {
   const [state, dispatch] = useReducer(reducer, initialState)
 
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      if (state.time > 0) {
+        dispatch({ type: 'SET_TIME', payload: state.time - 1000 });
+        localStorage.setItem('time', (state.time - 1000).toString());
+      } else {
+        localStorage.setItem('time', initialState.time.toString());
+        dispatch({ type: 'SET_TIME', payload: TIME});
+      }
+    }, 1000);
+  
+    return () => clearInterval(interval);
+  }, [state.time]);
+  
   return (
     <GameContext.Provider value={{ ...state, dispatch }}>
       {children}

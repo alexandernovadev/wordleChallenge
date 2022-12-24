@@ -1,7 +1,4 @@
 import { createContext } from "react";
+import { contextThemeProps } from "./Theme.type";
 
-export interface contextThemeProps {
-  theme: string,
-  setTheme: Function
-}
 export const ThemeContext = createContext({} as contextThemeProps);
