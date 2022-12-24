@@ -33,7 +33,7 @@ interface BoxLetter {
     | 'bg-[#3b4150]'
 }
 
-export const Board = ({isPresseKey}:any) => {
+export const Board = ({isPresseKey}:BoardProps) => {
   // const { matrix, boxActive, drawColorByEvaluation } = useWordleGame()
 
   const {letter} = useContext(GameContext)
@@ -97,15 +97,14 @@ export const Board = ({isPresseKey}:any) => {
     const newMatrix = [...matrix]
     // Get Word and pintar las correcciones
     for (let i = 0; i < matrix[boxActive[0]].length; i++) {
-      const currentLetter = matrix[boxActive[0]][i].letter
-      currentWord += currentLetter
+      const currentLetter = matrix[boxActive[0]][i].letter.toLocaleLowerCase()
+      const lowerWordToPlay = wordToPlay.toLocaleLowerCase()
+      currentWord += currentLetter      
 
       let bgColor: BoxLetter['bgColor'] = 'bg-[#dbdddd] dark:bg-[#3b4150]'
-      if (removeSpecialCharacter(wordToPlay[i]) === currentLetter) {
+      if (removeSpecialCharacter(lowerWordToPlay[i]) === currentLetter) {
         bgColor = 'bg-green'
-        console.log("es verde");
-        
-      } else if (removeSpecialCharacter(wordToPlay).includes(currentLetter)) {
+      } else if (removeSpecialCharacter(lowerWordToPlay).includes(currentLetter)) {
         bgColor = 'bg-yellow'
       }
 
