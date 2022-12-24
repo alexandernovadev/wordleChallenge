@@ -1,4 +1,4 @@
-import { useContext, useState } from 'react'
+import { useCallback, useContext, useMemo, useState } from 'react'
 import { GameContext } from '../../../context/Game/GameContext'
 import { Key } from '../../atoms/Key'
 import { Board } from '../../molecules/Board'
@@ -8,15 +8,34 @@ import { MiniHeader } from '../../molecules/MiniHeader'
 import { Statistics } from '../../molecules/Statistics'
 
 export const Game = () => {
-  const { dispatch } = useContext(GameContext)
-  const [isModalInstructionOpen, setIsModalInstructionOpen] = useState(false)
-  const [isModalStatisticsOpen, setIsModalStatisticsOpen] = useState(false)
+  const { dispatch,isFirstGame ,isDisabledGame} = useContext(GameContext)
+  const [isModalInstructionOpen, setIsModalInstructionOpen] = useState(isFirstGame)
+  const [isModalStatisticsOpen, setIsModalStatisticsOpen] = useState(isDisabledGame)
   const [isPresseKey, setIsPresseKey] = useState(false)
 
-  const onKeyPressed = (letter: string) => {
+  const onKeyPressed = useCallback((letter: string) => {
     dispatch({ type: 'SET_LETTER', payload: letter })
     setIsPresseKey((v) => !v)
-  }
+  }, [])
+
+  const instructions = useMemo(
+    () => (
+      <Instructions
+        isModalInstructionOpen={isModalInstructionOpen}
+        setIsModalInstructionOpen={setIsModalInstructionOpen}
+      />
+    ),
+    [isModalInstructionOpen]
+  )
+  const statistics = useMemo(
+    () => (
+      <Statistics
+        isModalStatiticsOpen={isModalStatisticsOpen}
+        setIsModalStatisticsOpen={setIsModalStatisticsOpen}
+      />
+    ),
+    [isModalStatisticsOpen]
+  )
 
   return (
     <>
@@ -25,7 +44,10 @@ export const Game = () => {
           openInstructions={() => setIsModalInstructionOpen(true)}
           openStatistics={() => setIsModalStatisticsOpen(true)}
         />
-        <Board isPresseKey={isPresseKey} showStatitics={()=>setIsModalStatisticsOpen(true)}/>
+        <Board
+          isPresseKey={isPresseKey}
+          showStatitics={() => setIsModalStatisticsOpen(true)}
+        />
         <KeyBoard>
           <div className='flex gap-[9.57px] '>
             <Key value='Q' onClick={onKeyPressed} />
@@ -63,14 +85,8 @@ export const Game = () => {
             <Key value='Backspace' type='BACKSPACE' onClick={onKeyPressed} />
           </div>
         </KeyBoard>
-        <Instructions
-          isModalInstructionOpen={isModalInstructionOpen}
-          setIsModalInstructionOpen={setIsModalInstructionOpen}
-        />
-        <Statistics
-          isModalStatiticsOpen={isModalStatisticsOpen}
-          setIsModalStatisticsOpen={setIsModalStatisticsOpen}
-        />
+        {instructions}
+        {statistics}
       </div>
     </>
   )

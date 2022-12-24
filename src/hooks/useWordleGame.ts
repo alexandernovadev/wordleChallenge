@@ -1,99 +1,159 @@
-import { useEffect, useState } from 'react'
+import { useContext, useEffect, useState } from 'react'
 import { letters } from '../assets/data/data'
+import { BoardProps, BoxLetter } from '../components/molecules/Board/Board.type'
+import { GameContext } from '../context/Game/GameContext'
+import {
+  initialValuesMatrix,
+  MAXIME_ATTEMPTS,
+  MAXIME_ROWS,
+  mockMatrix,
+  wordToPlay
+} from '../utils/getDataWordToGame'
+import { removeSpecialCharacter } from '../utils/RemoveSpecialLetters'
 
-const wordsAvalible = ['paco', 'mango', 'perro', 'mojar']
+export const useWordleGame = ({ isPresseKey, showStatitics }: BoardProps) => {
+  const { letter, dispatch, games, wins } = useContext(GameContext)
 
-const randomIndex = Math.floor(Math.random() * wordsAvalible.length)
-const wordToPlay = wordsAvalible[randomIndex]
-
-const MAXIME_ROWS = wordToPlay.length
-const MAXIME_ATTEMPTS = 5
-
-const initialMatrix = Array.from({ length: MAXIME_ATTEMPTS }, () =>
-  Array(MAXIME_ROWS).fill(' ')
-)
-
-export const useWordleGame = () => {
-  const [matrix, setMatrix] = useState<string[][]>(initialMatrix)
+  const [matrix, setMatrix] =
+    useState<Array<Array<BoxLetter>>>(initialValuesMatrix)
   const [boxActive, setBoxActive] = useState([0, 0])
 
-  const verifyWordAndFeedback = (attempt: number) => {
-    // Se obtiene la palabra formada en el intento actual
-    const word = matrix[attempt - 1].join('')
+  useEffect(() => {
+    handleGameKeys(letter)
+  }, [isPresseKey])
 
-    // Si la palabra formada es igual a la palabra a adivinar, se muestra un mensaje de victoria
-    if (word === wordToPlay) {
-      alert('¡Has ganado!')
+  const resetGame = () => {
+    const newGame = JSON.parse(JSON.stringify(mockMatrix))
+    setMatrix(newGame)
+    setBoxActive([0, 0])
+  }
+
+  const setLetterInBox = (letter: string) => {
+    const [rowIndex, colIndex] = boxActive
+
+    const newMatrix = [...matrix]
+    // Ponemos la letra en la posicion
+    newMatrix[rowIndex][colIndex] = {
+      ...newMatrix[rowIndex][colIndex],
+      letter
     }
-    // Si se han agotado los intentos permitidos, se muestra un mensaje de derrota
-    else if (attempt > MAXIME_ROWS) {
-      alert(`¡Has perdido! La palabra era ${wordToPlay}`)
+
+    setMatrix(newMatrix)
+
+    // Avanzamos a siguiente caja SI se puede
+    if (colIndex < MAXIME_ROWS - 1) {
+      setBoxActive([rowIndex, colIndex + 1])
     }
   }
 
   const deleteLetter = () => {
-    const [i, j] = boxActive
-    // Verificamos que la caja anterior exista y no esté vacía
-    if (j > 0 && matrix[i][j - 1] !== ' ') {
-      // Eliminamos la letra anterior utilizando splice
-      matrix[i][j - 1] = ' '
-      // Actualizamos el estado de la matriz y de la caja activa
-      setMatrix([...matrix])
-      setBoxActive([i, j - 1])
+    const [rowIndex, colIndex] = boxActive
+
+    // Verifica si hay una letra para borrar
+    if (matrix[rowIndex][colIndex].letter === '') {
+      // Estamos en la primera posicion
+      if (colIndex > 0) {
+        // Delete previos letter
+        setBoxActive([rowIndex, colIndex - 1])
+        const newMatrix = [...matrix]
+        newMatrix[rowIndex][colIndex - 1] = {
+          ...newMatrix[rowIndex][colIndex - 1],
+          letter: ''
+        }
+        setMatrix(newMatrix)
+      }
+    } else {
+      // Si hay una letra en la pos actual delete it
+      const newMatrix = [...matrix]
+      newMatrix[rowIndex][colIndex] = {
+        ...newMatrix[rowIndex][colIndex],
+        letter: ''
+      }
+
+      setMatrix(newMatrix)
     }
   }
 
-  const handleChange = (event: string) => {
-    try {
-      const [i, j] = boxActive
+  const getWordAndCorrectDraw = () => {
+    let currentWord = ''
+    const newMatrix = [...matrix]
+    // Get Word and pintar las correcciones
+    for (let i = 0; i < matrix[boxActive[0]].length; i++) {
+      const currentLetter = matrix[boxActive[0]][i].letter.toLocaleLowerCase()
+      const lowerWordToPlay = wordToPlay.toLocaleLowerCase()
+      currentWord += currentLetter
 
-      // Si la caja actual no está vacía, se pasa a la siguiente caja
-      if (matrix[i][j] !== ' ') {
-        setBoxActive([i, j + 1])
-        return
+      let bgColor: BoxLetter['bgColor'] = 'bg-[#dbdddd] dark:bg-[#3b4150]'
+      if (removeSpecialCharacter(lowerWordToPlay[i]) === currentLetter) {
+        bgColor = 'bg-green'
+      } else if (
+        removeSpecialCharacter(lowerWordToPlay).includes(currentLetter)
+      ) {
+        bgColor = 'bg-yellow'
       }
 
-      // Se actualiza el valor de la caja actual con la letra ingresada
-      matrix[i][j] = event
-      setMatrix([...matrix])
-
-      // Si se completó una fila, se verifica la palabra y se resetea la caja activa
-      if (j === MAXIME_ROWS - 1) {
-        verifyWordAndFeedback(i + 1)
-        setBoxActive([i + 1, 0])
+      newMatrix[boxActive[0]][i] = {
+        ...newMatrix[boxActive[0]][i],
+        bgColor
       }
-      // Si no se completó una fila, se pasa a la siguiente caja
-      else {
-        setBoxActive([i, j + 1])
-      }
-
-      // Si se alcanzó el último intento y se escribió en la última caja, se acaba el juego
-      if (i === MAXIME_ATTEMPTS - 1 && j === MAXIME_ROWS - 1) {
-        // Se obtiene la palabra formada en el último intento
-        const word = matrix[i].join('')
-        // Si la palabra formada es igual a la palabra a adivinar, se muestra un mensaje de victoria
-        if (word === wordToPlay) {
-          alert('¡Has ganado!')
-        }
-        // Si no, se muestra un mensaje de derrota
-        else {
-          alert(`¡Has perdido! La palabra era ${wordToPlay}`)
-        }
-      }
-    } catch (error) {
-      console.log('EStudpido no ve q se acabo todos')
     }
+    setMatrix(newMatrix)
+
+    return currentWord
   }
 
-  const handleKeyPress = (event: any) => {
-    if (event.key === 'Backspace') {
+  const verifyWord = () => {
+    const currentWord = getWordAndCorrectDraw()
+
+    const [rowIndex] = boxActive
+
+    // Puede seguir jugando? perdio? o ya gano ?
+    if (removeSpecialCharacter(wordToPlay) === currentWord) {
+      dispatch({ type: 'SET_GAMES', payload: games + 1 })
+      dispatch({ type: 'SET_WINS', payload: wins + 1 })
+      resetGame()
+      showStatitics()
+      disabledGame()
+    } else if (boxActive[0] < MAXIME_ATTEMPTS - 1) {
+      //sumele un nueva attemps y poscisionelo
+      setBoxActive([rowIndex + 1, 0])
+    } else {
+      dispatch({ type: 'SET_GAMES', payload: games + 1 })
+      resetGame()
+      showStatitics()
+      disabledGame()
+    }
+  }
+  const disabledGame = () => {
+    // TODO:  Redux persist ?
+    dispatch({ type: 'SET_DISABLEDGAME', payload: true })
+    localStorage.setItem('isDisabledGame', String(true))
+  }
+
+  const handleGameKeys = (key: string) => {
+    const [rowIndex, colIndex] = boxActive
+    if (key === 'Backspace') {
       deleteLetter()
       return
     }
-    if (letters.includes(event.key)) {
-      handleChange(event.key)
+
+    if (key === 'Enter') {
+      // Si esta en la ultima posicion del intento y lleno la ultima casilla
+      if (
+        colIndex == wordToPlay.length - 1 &&
+        matrix[rowIndex][colIndex].letter !== ''
+      ) {
+        verifyWord()
+      }
+      return
+    }
+
+    if (letters.includes(key)) {
+      setLetterInBox(key)
     }
   }
+
+  const handleKeyPress = (event: KeyboardEvent) => handleGameKeys(event.key)
 
   useEffect(() => {
     document.addEventListener('keydown', handleKeyPress, false)
@@ -103,31 +163,8 @@ export const useWordleGame = () => {
     }
   }, [boxActive])
 
-  const drawColorByEvaluation = (i: number, j: number) => {
-    const background = {
-      background: 'bg-[#3b4150]'
-    }
-
-    // Si la letra se encuentra en el mismo lugar de la palabra a adivinar
-    if (matrix[i][j] === wordToPlay[j]) {
-      background.background = 'bg-green'
-    }
-    // Si la letra se encuentra en la palabra, pero no en el mismo lugar
-    else if (wordToPlay.includes(matrix[i][j])) {
-      background.background = 'bg-yellow'
-    }
-    // Si la letra no se encuentra en la palabra
-    else {
-      background.background = 'bg-[#dbdddd] dark:bg-[#3b4150]'
-    }
-
-    return background
-  }
-
   return {
     matrix,
-    boxActive,
-
-    drawColorByEvaluation
+    boxActive
   }
 }

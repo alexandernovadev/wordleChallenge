@@ -21,7 +21,7 @@ export const MiniHeader = ({
 
   return (
     <div
-      className={`w-[638px] h-[84px] rounded-[15px] flex justify-around items-center bg-miniheaderLigh dark:bg-miniheaderDark `}
+      className={`mb-8 w-[638px] h-[84px] rounded-[15px] flex justify-around items-center bg-miniheaderLigh dark:bg-miniheaderDark `}
     >
       <div>
         <img

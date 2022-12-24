@@ -3,3 +3,12 @@ export interface BoardProps {
   isPresseKey: boolean
   showStatitics:Function
 }
+
+export interface BoxLetter {
+  letter: string
+  bgColor:
+    | 'bg-[#dbdddd] dark:bg-[#3b4150]'
+    | 'bg-green'
+    | 'bg-yellow'
+    | 'bg-[#3b4150]'
+}

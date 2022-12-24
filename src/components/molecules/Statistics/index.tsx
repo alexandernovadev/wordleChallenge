@@ -9,8 +9,7 @@ export const Statistics = ({
   isModalStatiticsOpen,
   setIsModalStatisticsOpen
 }: StatisticsProps) => {
-  const { games, wins, time } = useContext(GameContext)
-
+  const { games, wins, time ,isDisabledGame} = useContext(GameContext)
   return (
     <Modal isOpen={isModalStatiticsOpen} classNames='!px-[70px]'>
       <div className='flex justify-center items-center mb-[44px] '>
@@ -38,7 +37,8 @@ export const Statistics = ({
 
         <Button
           text={'Aceptar'}
-          onClick={() => setIsModalStatisticsOpen(false)}
+          isDisabled={isDisabledGame}
+          onClick={() => setIsModalStatisticsOpen(isDisabledGame)}
         />
       </div>
     </Modal>
