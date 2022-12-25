@@ -15,7 +15,7 @@ const getData = ()=> {
 
 
 const setWordActive = (word:string) => {
-  const wordActive = localStorage.setItem('activeWord',word)
+  localStorage.setItem('activeWord',word)
 }
 
 const wordsAvalible = getData()
@@ -27,7 +27,7 @@ export const wordToPlay = wordsAvalible[randomIndex]
 setWordActive(wordToPlay)
 
 
-console.log('La palabra es ', wordToPlay)
+// console.log('La palabra es ', wordToPlay)
 
 export const MAXIME_ROWS = wordToPlay.length
 export const MAXIME_ATTEMPTS = 5

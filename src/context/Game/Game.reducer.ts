@@ -1,6 +1,6 @@
 import { ActionType, GamePropsOnlyData } from "./Game.type"
 
-export const TIME = 20000 // 5 minutos
+export const TIME = 300000 // 5 minutos
 
 export const initialState: GamePropsOnlyData = {
   games: +getGames(),
