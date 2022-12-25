@@ -30,7 +30,6 @@ export const GameProvider = ({ children }: GameProviderProps) => {
     if (state.isFirstGame) {
       dispatch({ type: 'SET_FIRSTGAME', payload: false })
       localStorage.setItem('first', String(false))
-      location.reload()
     }
   }, [])
 
