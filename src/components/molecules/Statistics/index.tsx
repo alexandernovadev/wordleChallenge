@@ -9,7 +9,7 @@ export const Statistics = ({
   isModalStatiticsOpen,
   setIsModalStatisticsOpen
 }: StatisticsProps) => {
-  const { games, wins, time ,isDisabledGame} = useContext(GameContext)
+  const { games, wins, time, isDisabledGame } = useContext(GameContext)
   return (
     <Modal isOpen={isModalStatiticsOpen} classNames='!px-[70px]'>
       <div className='flex justify-center items-center mb-[44px] '>
@@ -28,9 +28,12 @@ export const Statistics = ({
       </div>
 
       <div className='flex flex-col justify-center items-center mt-[42px]'>
-        <h3>
-          La palabra era: <b>PERRO</b>
-        </h3>
+        {localStorage.getItem('oldWord') && (
+          <h3>
+            {' '}
+            La palabra era: <b>{localStorage.getItem('oldWord')}</b>
+          </h3>
+        )}
 
         <p className='mt-4'>SIGUIENTE PALABRA</p>
         <h3 className='mt-2 mb-12'>{formatTime(time)}</h3>

@@ -3,8 +3,8 @@ import { ActionType, GamePropsOnlyData } from "./Game.type"
 export const TIME = 20000 // 5 minutos
 
 export const initialState: GamePropsOnlyData = {
-  games: 0,
-  wins: 0,
+  games: +getGames(),
+  wins: +getWins(),
   letter: '',
   time: +getTime(),
   isFirstGame: getFistTime(),
@@ -33,6 +33,12 @@ export function reducer(state: GamePropsOnlyData, action: ActionType) {
 // Helpers
 function getTime() {
   return localStorage.getItem('time') || TIME
+}
+function getWins() {
+  return localStorage.getItem('wins') || 0
+}
+function getGames() {
+  return localStorage.getItem('games') || 0
 }
 function getFistTime() {
   const fistTime = localStorage.getItem('first')

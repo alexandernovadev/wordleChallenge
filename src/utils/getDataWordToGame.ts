@@ -1,12 +1,30 @@
+import { wordsList } from "../assets/data/wordDataSmall"
 import { BoxLetter } from "../components/molecules/Board/Board.type"
 
-const wordsAvalible = ['pácó', 'mángo', 'perro', 'mojar']
+// Deberia ser redux-persist, TODO
+const getData = ()=> {
+  const listWord = localStorage.getItem('listWords') 
+
+  if (listWord) {
+    return JSON.parse(listWord)
+  }else {
+    localStorage.setItem('listWords',JSON.stringify(wordsList))
+    return listWord
+  }
+}
+
+
+const setWordActive = (word:string) => {
+  const wordActive = localStorage.setItem('activeWord',word)
+}
+
+const wordsAvalible = getData()
 
 const randomIndex = Math.floor(Math.random() * wordsAvalible.length)
 
 // esto deberia esta en el localstorage
 export const wordToPlay = wordsAvalible[randomIndex]
-
+setWordActive(wordToPlay)
 
 
 console.log('La palabra es ', wordToPlay)

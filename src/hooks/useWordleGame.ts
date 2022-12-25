@@ -108,22 +108,45 @@ export const useWordleGame = ({ isPresseKey, showStatitics }: BoardProps) => {
     const [rowIndex] = boxActive
 
     // Puede seguir jugando? perdio? o ya gano ?
+    // TODO: refactor this, localstorage se salio de control !
+
     if (removeSpecialCharacter(wordToPlay) === currentWord) {
       dispatch({ type: 'SET_GAMES', payload: games + 1 })
       dispatch({ type: 'SET_WINS', payload: wins + 1 })
+      localStorage.setItem('wins', String(wins + 1))
+      localStorage.setItem('games', String(games + 1))
+
       resetGame()
-      showStatitics()
+      // showStatitics()
       disabledGame()
+      formatNextGame()
     } else if (boxActive[0] < MAXIME_ATTEMPTS - 1) {
       //sumele un nueva attemps y poscisionelo
       setBoxActive([rowIndex + 1, 0])
     } else {
       dispatch({ type: 'SET_GAMES', payload: games + 1 })
+      localStorage.setItem('games', String(games + 1))
+
       resetGame()
-      showStatitics()
+      // showStatitics()
       disabledGame()
+      formatNextGame()
     }
   }
+
+  // Refactor this, is navidad :((()))
+  const formatNextGame = () => {
+    const dataOld: Array<string> = JSON.parse(
+      localStorage.getItem('listWords')!
+    )
+    const wordActive = localStorage.getItem('activeWord')!
+
+    const newList = dataOld.filter((x) => x !== wordActive)
+    localStorage.setItem('listWords', JSON.stringify(newList))
+    localStorage.setItem('oldWord', wordActive)
+    location.reload()
+  }
+
   const disabledGame = () => {
     // TODO:  Redux persist ?
     dispatch({ type: 'SET_DISABLEDGAME', payload: true })
